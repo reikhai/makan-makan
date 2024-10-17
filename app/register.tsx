@@ -9,83 +9,83 @@ import {
 } from "react-native";
 import {
   Provider as PaperProvider,
+  TextInput,
   Title,
   Snackbar,
   Surface,
 } from "react-native-paper";
-import { LinearGradient } from "expo-linear-gradient";
-import { Link } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient"; // Use this if using Expo
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedInput } from "@/components/ThemedInput";
-
 const App = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [visible, setVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const onLogin = () => {
+  const onRegister = () => {
     if (!email || !password) {
       setErrorMessage("Please enter email and password.");
       setVisible(true);
     } else {
       // Handle login logic
-      console.log("Login successful");
+      console.log("Register successful");
     }
-  };
-
-  const handleEmailInputChange = (text: string) => {
-    setEmail(text);
-  };
-
-  const handlePasswordInputChange = (text: string) => {
-    setPassword(text);
-  };
-
-  const onRegister = () => {
-    console.log("Navigate to Register");
-    // Add navigation logic here
   };
 
   return (
     <PaperProvider>
-      <LinearGradient colors={["#FFFFFF", "#F0F0F0"]} style={styles.gradient}>
+      <LinearGradient
+        colors={["#FFFFFF", "#F0F0F0"]} // Light gradient from white to a very light gray
+        style={styles.gradient} // Apply gradient style
+      >
         <SafeAreaView style={styles.safeContainer}>
           <View style={styles.container}>
-            <Link href="/register" style={styles.registerButton}>
-              <ThemedText style={styles.registerButtonText}>
-                Register
-              </ThemedText>
-            </Link>
             <Surface style={styles.surface} elevation={2}>
               <Image
-                source={require("../assets/images/logo.png")}
+                source={require("../assets/images/logo.png")} // Adjust the path to your logo
                 style={styles.logo}
                 resizeMode="contain"
               />
-              <Title>Login</Title>
-              <ThemedInput
-                mode="outlined"
+              <Title>Register</Title>
+              <TextInput
+                outlineColor="#e435"
+                activeOutlineColor="#FF5733"
                 label="Email"
                 value={email}
-                secureTextEntry={false}
-                onChangeText={handleEmailInputChange}
-              />
-              <ThemedInput
+                onChangeText={(text) => setEmail(text)}
+                style={styles.input}
                 mode="outlined"
+              />
+              <TextInput
+                outlineColor="#e435"
+                activeOutlineColor="#FF5733"
                 label="Password"
                 value={password}
-                onChangeText={handlePasswordInputChange}
-                secureTextEntry={true}
+                onChangeText={(text) => setPassword(text)}
+                secureTextEntry
+                style={styles.input}
+                mode="outlined"
               />
-              <TouchableOpacity onPress={onLogin} style={styles.button}>
+              <TextInput
+                outlineColor="#e435"
+                activeOutlineColor="#FF5733"
+                label="Confrim Password"
+                value={confirmPassword}
+                onChangeText={(text) => setConfirmPassword(text)}
+                secureTextEntry
+                style={styles.input}
+                mode="outlined"
+              />
+              <TouchableOpacity onPress={onRegister} style={styles.button}>
                 <LinearGradient
-                  colors={["#FF5733", "#FFBD33"]}
+                  colors={["#FF5733", "#FFBD33"]} // Your gradient colors
                   style={styles.button}
                   start={{ x: 0.8, y: 0 }} // Start from the right
                   end={{ x: 0, y: 0 }} // End on the left
                 >
-                  <ThemedText style={styles.buttonText}>Login</ThemedText>
+                  <ThemedText style={styles.buttonText}>Register</ThemedText>
                 </LinearGradient>
               </TouchableOpacity>
             </Surface>
@@ -138,21 +138,11 @@ const styles = StyleSheet.create({
   surface: {
     padding: 20,
     borderRadius: 15,
-    height: "50%",
+    height: "60%",
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#FFFFFF",
-  },
-  registerButton: {
-    position: "absolute", // Position it absolutely
-    top: 10, // Adjust the top position
-    right: 16, // Adjust the right position
-  },
-  registerButtonText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#FF5733",
   },
 });
 
