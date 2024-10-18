@@ -11,7 +11,7 @@ import NotificationScreen from "./(tabs)/notice";
 import { Avatar, IconButton } from "react-native-paper";
 import { StyleSheet } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { NavigationContainer, DrawerActions } from "@react-navigation/native";
+import { DrawerActions } from "@react-navigation/native";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -99,7 +99,7 @@ const DrawerNavigator = () => {
       }}
     >
       <Drawer.Screen
-        name="HomeTabdfs"
+        name="HomeTabs"
         component={HomeTabs}
         options={{
           headerShown: false,
