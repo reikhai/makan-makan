@@ -1,159 +1,168 @@
 // App.js
-import React, { useState } from "react";
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Image,
-  SafeAreaView,
-} from "react-native";
-import {
-  Provider as PaperProvider,
-  Title,
-  Snackbar,
-  Surface,
-} from "react-native-paper";
-import { LinearGradient } from "expo-linear-gradient";
-import { Link } from "expo-router";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedInput } from "@/components/ThemedInput";
+import React from "react";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { TabBarIcon } from "@/components/navigation/TabBarIcon";
+import LoginScreen from "./Auth/login";
+import HomeScreen from "./(tabs)/index";
+import CartScreen from "./(tabs)/cart";
+import FavouriteScreen from "./(tabs)/favourite";
+import NotificationScreen from "./(tabs)/notice";
+import { Avatar, IconButton } from "react-native-paper";
+import { StyleSheet } from "react-native";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import { NavigationContainer, DrawerActions } from "@react-navigation/native";
+
+const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+const Drawer = createDrawerNavigator();
+
+const HomeTabs = () => {
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        tabBarActiveTintColor: "#FF5733",
+        tabBarInactiveTintColor: "#2a2a2a",
+      }}
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          headerShown: false,
+          title: "Home",
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "home" : "home-outline"}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Favourite"
+        component={FavouriteScreen}
+        options={{
+          headerShown: false,
+          title: "Favourite",
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "heart" : "heart-outline"}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Notification"
+        component={NotificationScreen}
+        options={{
+          headerShown: false,
+          title: "Notification",
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "notifications" : "notifications-outline"}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Cart"
+        component={CartScreen}
+        options={{
+          headerShown: false,
+          title: "Cart",
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "cart" : "cart-outline"}
+              color={focused ? "#FF5733" : color}
+            />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
+
+const DrawerNavigator = () => {
+  return (
+    <Drawer.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        drawerStyle: {
+          backgroundColor: "#c6cbef",
+          width: 240,
+        },
+        drawerActiveBackgroundColor: "#ffd7be",
+        drawerActiveTintColor: "#2a2a2a",
+      }}
+    >
+      <Drawer.Screen
+        name="HomeTabdfs"
+        component={HomeTabs}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </Drawer.Navigator>
+  );
+};
 
 const App = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [visible, setVisible] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const onLogin = () => {
-    if (!email || !password) {
-      setErrorMessage("Please enter email and password.");
-      setVisible(true);
-    } else {
-      // Handle login logic
-      console.log("Login successful");
-    }
-  };
-
-  const handleEmailInputChange = (text: string) => {
-    setEmail(text);
-  };
-
-  const handlePasswordInputChange = (text: string) => {
-    setPassword(text);
-  };
-
-  const onRegister = () => {
-    console.log("Navigate to Register");
-    // Add navigation logic here
-  };
-
   return (
-    <PaperProvider>
-      <LinearGradient colors={["#FFFFFF", "#F0F0F0"]} style={styles.gradient}>
-        <SafeAreaView style={styles.safeContainer}>
-          <View style={styles.container}>
-            <Link href="/register" style={styles.registerButton}>
-              <ThemedText style={styles.registerButtonText}>
-                Register
-              </ThemedText>
-            </Link>
-            <Surface style={styles.surface} elevation={2}>
-              <Image
-                source={require("../assets/images/logo.png")}
-                style={styles.logo}
-                resizeMode="contain"
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{
+          headerTintColor: "#2a2a2a",
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+        }}
+      >
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false, gestureEnabled: false }}
+        />
+
+        <Stack.Screen
+          name="Drawer"
+          component={DrawerNavigator}
+          options={({ navigation }) => ({
+            headerShown: true,
+            gestureEnabled: false,
+            headerRight: () => (
+              <Avatar.Image
+                size={36}
+                source={require("../assets/images/avatar_2.png")}
+                style={styles.avatarBG}
               />
-              <Title>Login</Title>
-              <ThemedInput
-                mode="outlined"
-                label="Email"
-                value={email}
-                secureTextEntry={false}
-                onChangeText={handleEmailInputChange}
+            ),
+            headerLeft: () => (
+              <IconButton
+                mode="contained"
+                icon="menu"
+                iconColor={"#2a2a2a"}
+                containerColor={"transparent"}
+                size={20}
+                onPress={() =>
+                  navigation.dispatch(DrawerActions.toggleDrawer())
+                }
               />
-              <ThemedInput
-                mode="outlined"
-                label="Password"
-                value={password}
-                onChangeText={handlePasswordInputChange}
-                secureTextEntry={true}
-              />
-              <TouchableOpacity onPress={onLogin} style={styles.button}>
-                <LinearGradient
-                  colors={["#FF5733", "#FFBD33"]}
-                  style={styles.button}
-                  start={{ x: 0.8, y: 0 }} // Start from the right
-                  end={{ x: 0, y: 0 }} // End on the left
-                >
-                  <ThemedText style={styles.buttonText}>Login</ThemedText>
-                </LinearGradient>
-              </TouchableOpacity>
-            </Surface>
-            <Snackbar
-              visible={visible}
-              onDismiss={() => setVisible(false)}
-              duration={3000}
-            >
-              {errorMessage}
-            </Snackbar>
-          </View>
-        </SafeAreaView>
-      </LinearGradient>
-    </PaperProvider>
+            ),
+          })}
+        />
+      </Stack.Navigator>
   );
 };
 
 const styles = StyleSheet.create({
-  gradient: {
-    flex: 1, // Make sure the gradient covers the whole screen
-  },
-  safeContainer: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 16,
-  },
-  logo: {
-    width: 100, // Adjust width as needed
-    height: 100, // Adjust height as needed
-  },
-  input: {
-    marginBottom: 16,
-    width: "100%",
-  },
-  button: {
-    width: "100%",
-    borderRadius: 5,
-    paddingVertical: 16, // Padding for the button
-    alignItems: "center", // Center text horizontally
-  },
-  buttonText: {
-    color: "white", // Set your desired text color
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  surface: {
-    padding: 20,
-    borderRadius: 15,
-    height: "50%",
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#FFFFFF",
-  },
-  registerButton: {
-    position: "absolute", // Position it absolutely
-    top: 10, // Adjust the top position
-    right: 16, // Adjust the right position
-  },
-  registerButtonText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#FF5733",
+  avatarBG: {
+    backgroundColor: "#ffd7be",
   },
 });
-
 export default App;
+
+
+
