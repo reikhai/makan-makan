@@ -10,8 +10,14 @@ import FavouriteScreen from "./(tabs)/favourite";
 import NotificationScreen from "./(tabs)/notice";
 import { Avatar, IconButton } from "react-native-paper";
 import { StyleSheet } from "react-native";
-import { createDrawerNavigator } from "@react-navigation/drawer";
 import { DrawerActions } from "@react-navigation/native";
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItemList,
+  DrawerItem,
+} from "@react-navigation/drawer";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -85,25 +91,103 @@ const HomeTabs = () => {
   );
 };
 
+const CustomDrawerContent = (props) => {
+  return (
+    <DrawerContentScrollView {...props}>
+      <DrawerItemList {...props} />
+      <DrawerItem
+        label="Logout"
+        labelStyle={{
+          fontSize: 16,
+          fontWeight: "bold",
+          marginLeft: -25,
+          color: "#202020",
+        }}
+        onPress={() => props.navigation.navigate("Login")}
+        icon={({ focused, color, size }) => (
+          <Ionicons
+            color="#202020"
+            size={25}
+            name={focused ? "log-out" : "log-out-outline"}
+          />
+        )}
+      />
+    </DrawerContentScrollView>
+  );
+};
+
+const getScreenOptions = (navigation, iconName) => ({
+  headerShown: true,
+  drawerIcon: ({ color, focused }) => (
+    <TabBarIcon
+      name={focused ? iconName : `${iconName}-outline`}
+      color={focused ? "#FF5733" : color}
+      size={25}
+    />
+  ),
+  headerLeft: () => (
+    <IconButton
+      mode="contained"
+      icon="menu"
+      iconColor={"#2a2a2a"}
+      containerColor={"transparent"}
+      size={20}
+      onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+    />
+  ),
+  headerRight: () => (
+    <Avatar.Image
+      size={36}
+      source={require("../assets/images/avatar_2.png")}
+      style={styles.avatarBG}
+    />
+  ),
+});
+
+
 const DrawerNavigator = () => {
   return (
     <Drawer.Navigator
-      initialRouteName="Home"
       screenOptions={{
+        drawerType: "front",
         drawerStyle: {
-          backgroundColor: "#c6cbef",
-          width: 240,
+          backgroundColor: "#FFFFFF",
+          width: 220,
         },
-        drawerActiveBackgroundColor: "#ffd7be",
-        drawerActiveTintColor: "#2a2a2a",
+        drawerLabelStyle: {
+          fontSize: 16,
+          fontWeight: "bold",
+          marginLeft: -25,
+          marginTop: 3,
+        },
+        drawerActiveBackgroundColor: "#FFFFFF",
+        drawerActiveTintColor: "#FF5733",
+        drawerInactiveTintColor: "#2a2a2a",
       }}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
       <Drawer.Screen
-        name="HomeTabs"
+        name="Home Tabs"
         component={HomeTabs}
-        options={{
-          headerShown: false,
-        }}
+        options={({ navigation }) => getScreenOptions(navigation, "cart")}
+      />
+
+      <Drawer.Screen
+        name="Profile"
+        component={HomeTabs}
+        options={({ navigation }) => getScreenOptions(navigation, "person")}
+      />
+
+      <Drawer.Screen
+        name="Settings"
+        component={HomeTabs}
+        options={({ navigation }) => getScreenOptions(navigation, "settings")}
+      />
+
+      <Drawer.Screen
+        name="Needs Help?"
+        component={HomeTabs}
+        options={({ navigation }) => getScreenOptions(navigation, "help-circle")}
       />
     </Drawer.Navigator>
   );
@@ -130,7 +214,7 @@ const App = () => {
           name="Drawer"
           component={DrawerNavigator}
           options={({ navigation }) => ({
-            headerShown: true,
+            headerShown: false,
             gestureEnabled: false,
             headerRight: () => (
               <Avatar.Image
@@ -160,8 +244,10 @@ const App = () => {
 const styles = StyleSheet.create({
   avatarBG: {
     backgroundColor: "#ffd7be",
+    marginRight: 20,
   },
 });
+
 export default App;
 
 
