@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     margin: 5,
+    backgroundColor: "#FFFFFF",
   },
   coverContainer: {
     position: "relative",

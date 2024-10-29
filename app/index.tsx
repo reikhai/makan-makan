@@ -8,6 +8,9 @@ import HomeScreen from "./(tabs)/index";
 import CartScreen from "./(tabs)/cart";
 import FavouriteScreen from "./(tabs)/favourite";
 import NotificationScreen from "./(tabs)/notice";
+import SettingScreen from "./screens/settings";
+import ProfileScreen from "./screens/profiles";
+
 import { Avatar, IconButton } from "react-native-paper";
 import { StyleSheet } from "react-native";
 import { DrawerActions } from "@react-navigation/native";
@@ -23,6 +26,29 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
+const tabScreens = [
+  {
+    name: "Home",
+    component: HomeScreen,
+    icon: "home",
+  },
+  {
+    name: "Favourite",
+    component: FavouriteScreen,
+    icon: "heart",
+  },
+  {
+    name: "Notification",
+    component: NotificationScreen,
+    icon: "notifications",
+  },
+  {
+    name: "Cart",
+    component: CartScreen,
+    icon: "cart",
+  },
+];
+
 const HomeTabs = () => {
   return (
     <Tab.Navigator
@@ -31,62 +57,23 @@ const HomeTabs = () => {
         tabBarInactiveTintColor: "#2a2a2a",
       }}
     >
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          headerShown: false,
-          title: "Home",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "home" : "home-outline"}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Favourite"
-        component={FavouriteScreen}
-        options={{
-          headerShown: false,
-          title: "Favourite",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "heart" : "heart-outline"}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Notification"
-        component={NotificationScreen}
-        options={{
-          headerShown: false,
-          title: "Notification",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "notifications" : "notifications-outline"}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Cart"
-        component={CartScreen}
-        options={{
-          headerShown: false,
-          title: "Cart",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "cart" : "cart-outline"}
-              color={focused ? "#FF5733" : color}
-            />
-          ),
-        }}
-      />
+      {tabScreens.map(({ name, component, icon }) => (
+        <Tab.Screen
+          key={name}
+          name={name}
+          component={component}
+          options={{
+            headerShown: false,
+            title: name,
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon
+                name={focused ? icon : `${icon}-outline`}
+                color={color}
+              />
+            ),
+          }}
+        />
+      ))}
     </Tab.Navigator>
   );
 };
@@ -116,12 +103,14 @@ const CustomDrawerContent = (props) => {
   );
 };
 
-const getScreenOptions = (navigation, iconName) => ({
+const getScreenOptions = (navigation, iconName, titleName) => ({
   headerShown: true,
-  drawerIcon: ({ color, focused }) => (
+  title: titleName,
+  headerTitle: () => null, //Hide Header Title for Specific Screens
+  drawerIcon: ({ color }) => (
     <TabBarIcon
-      name={focused ? iconName : `${iconName}-outline`}
-      color={focused ? "#FF5733" : color}
+      name={`${iconName}-outline`}
+      color= {color}
       size={25}
     />
   ),
@@ -161,33 +150,35 @@ const DrawerNavigator = () => {
           marginTop: 3,
         },
         drawerActiveBackgroundColor: "#FFFFFF",
-        drawerActiveTintColor: "#FF5733",
+        drawerActiveTintColor: "#2a2a2a",
         drawerInactiveTintColor: "#2a2a2a",
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
       <Drawer.Screen
-        name="Home Tabs"
+        name="Home_drawer"
         component={HomeTabs}
-        options={({ navigation }) => getScreenOptions(navigation, "cart")}
+        options={({ navigation }) => getScreenOptions(navigation, "home", "Home")}
       />
 
       <Drawer.Screen
         name="Profile"
-        component={HomeTabs}
-        options={({ navigation }) => getScreenOptions(navigation, "person")}
+        component={ProfileScreen}
+        options={({ navigation }) => getScreenOptions(navigation, "person", "Profile")}
       />
 
       <Drawer.Screen
         name="Settings"
-        component={HomeTabs}
-        options={({ navigation }) => getScreenOptions(navigation, "settings")}
+        component={SettingScreen}
+        options={({ navigation }) => getScreenOptions(navigation, "settings", "Settings")}
       />
 
       <Drawer.Screen
         name="Needs Help?"
         component={HomeTabs}
-        options={({ navigation }) => getScreenOptions(navigation, "help-circle")}
+        options={({ navigation }) =>
+          getScreenOptions(navigation, "help-circle", "Needs Help?")
+        }
       />
     </Drawer.Navigator>
   );
